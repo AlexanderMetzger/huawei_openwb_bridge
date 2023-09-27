@@ -1,0 +1,3 @@
+huawei-solar==2.2.9
+numpy==1.26.0
+paho-mqtt==1.6.1
