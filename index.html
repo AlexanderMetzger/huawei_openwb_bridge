@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Huawei - OpenWB - Bridge Konfiguration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        h3 {
+            color: #555;
+        }
+        h4 {
+            color: #777;
+        }
+        h5 {
+            color: #999;
+        }
+        p {
+            color: #666;
+        }
+        .intro {
+            background-color: #ffcccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+            padding: 2px;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+        }
+        form {
+            margin-top: 10px;
+        }
+        .wifi-form {
+            margin-top: 0px;
+        }
+        input[type="text"], input[type="password"] {
+            padding: 5px;
+            width: 300px;
+        }
+        input[type="submit"] {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+                .actions-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Adjust the individual form width */
+        .restart-form,
+        .update-form {
+            width: 48%; /* Adjust as needed */
+        }
+
+        /* Adjust spacing between actions */
+        .actions-form {
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+        .mqtt-config {
+            background-color: #f2f2f2; /* Light gray background color */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <h2>Huawei - OpenWB MQTT Bridge  </h2>
+    <div class="intro">
+        <p>Version: {{ firmware_version }}</p>
+        <p>Die Werte werden direkt vom Huawei Wechselrichter ausgelesen und an die OpenWB übergeben.
+        <br>Dafür ist es wichtig, dass dieses Tool mit dem WLAN des Wechselrichters verbunden ist. Außerdem muss beim Wechselrichter ModBus-TCP auf "Enable (Unrestricted)" gestellt werden, das geht über die Konfiguration des Dongels.
+        <br>Bitte beachte, dass die Reichweite des Wechselrichter WLAN sehr gering ist und daher die Bridge in der Nähe des Wechselrichters platziert werden muss.</p>
+        <p>Nachdem du das WLAN-Passwort eingegeben hast, klicke auf "Verbinden" und warte 15 Sekunden.
+        <br>Sollte sich der Verbindungsstatus nicht auf "Verbunden" ändern, trenne die Bridge für ein paar Sekunden vom Strom oder verwende den Restart-Button unten.
+        <br>Danach sollte die Verbindung zum Huawei Wechselrichter stehen.
+       <br>getester Softwarestand Dongel: V100R001C00SPC133 </p>
+    </div>
+    <h3>Verfügbare WLAN-Netzwerke</h3>
+    {% if connection_status %}
+        <p>Verbindungsstatus: {{ connection_status }}</p>
+    {% endif %}
+    <ul>
+        {% for network in networks %}
+            <li>
+                {{ network.ssid }} (Signalstärke: {{ network.signal }} dBm)
+                <form action="/connect" method="post" class="wifi-form">
+                    <input type="hidden" name="ssid" value="{{ network.ssid }}">
+                    WLAN-Schlüssel: <input type="password" name="password">
+                    <input type="submit" value="Verbinden">
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+      <div class="mqtt-config">
+    <form action="/save_config" method="post">
+        <h3>MQTT-Konfiguration OpenWB</h3>
+
+        OpenWB IP Adresse: <input type="text" name="mqtt_host" value="{{ mqtt_host }}"><br>
+
+        Wechselrichter MQTT ID: <input type="text" name="pv_number" value="{{ pv_number }}"><br>
+
+        Zähler MQTT ID: <input type="text" name="counter_number" value="{{ counter_number }}"><br>
+
+        Speicher MQTT ID: <input type="text" name="bat_number" value="{{ bat_number }}"><br>
+        <input type="submit" value="Speichern">
+    </form>
+        </div>
+  <div class="actions-container">
+        <form action="/restart" method="post" class="restart-form">
+            <h4>Neustarten des Raspberry Pi</h4>
+            <input type="submit" value="Restart">
+        </form>
+        <form action="/update_firmware" method="post" class="update-form">
+            <h4>Update</h4>
+            <p>ACHTUNG: Nach dem Update müssen die MQTT-Adressen und die IP der OpenWB wieder eingestellt werden!</p>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+</body>
+</html>

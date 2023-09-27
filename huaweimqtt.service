@@ -1,0 +1,12 @@
+[Unit]
+Description=Huawei Mqtt Bridge
+After=network.target
+Wants=network.target
+
+[Service]
+User=pi
+ExecStartPre=/bin/sleep 30
+ExecStart=/usr/local/bin/python3.10 /home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py
+
+[Install]
+WantedBy=multi-user.target
