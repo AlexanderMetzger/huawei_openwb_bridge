@@ -1,0 +1,13 @@
+Description=APP zur WLAN Configuration und OpenWB IP
+After=multi-user.target
+After=network.target
+ 
+[Service]
+User=pi 
+Grou=pi
+WorkingDirectory=/home/pi
+ExecStart=user/bin/pyton3 /home/pi/wlan_app.py &
+Restart=always
+ 
+[Install]
+WantedBy=multi-user.target
