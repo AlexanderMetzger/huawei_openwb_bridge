@@ -25,10 +25,10 @@ wifi_interface = 0
 connection_status = None
 
 
-# Lese den Versionshinweis aus der huaweimqtt_v1_0.py-Datei
+# Lese den Versionshinweis aus der huaweimqtt.py-Datei
 def get_firmware_version():
     try:
-        with open('/home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py', 'r') as f:
+        with open('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 'r') as f:
             first_line = f.readline()
             version = first_line.strip().replace("# version ", "")
             return version
@@ -56,7 +56,7 @@ def update_firmware():
                 zip_ref.extractall('/tmp/huaweimqtt_v1_0')
 
             # Datei kopieren und ersetzen
-            shutil.copy('/tmp/huaweimqtt_v1_0/huaweimqtt_v1_0.py', '/home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py')
+            shutil.copy('/tmp/huaweimqtt_v1_0/huaweimqtt.py', '/home/pi/huawei_bridge_openwb/huaweimqtt.py')
             # Hier die index.html-Datei kopieren und ersetzen
             shutil.copy('/tmp/huaweimqtt_v1_0/index.html', '/home/pi/templates/index.html')
              # Hier die config.ini-Datei kopieren und ersetzen
@@ -65,13 +65,13 @@ def update_firmware():
             shutil.copy('/tmp/huaweimqtt_v1_0/wlan_app.py', '/home/pi/wlan_app.py')
 
             # Berechtigungen zurücksetzen
-            os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py', os.getuid(), os.getgid())
-            os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py', 0o755)
+            os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
+            os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
             os.chown('/home/pi/wlan_app.py', os.getuid(), os.getgid())
             os.chmod('/home/pi/wlan_app.py', 0o755)
             # Firmware-Version auslesen
 
-            with open('/home/pi/huawei_bridge_openwb/huaweimqtt_v1_0.py', 'r') as f:
+            with open('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 'r') as f:
                 first_line = f.readline()
                 if first_line.startswith('# version'):
                     version_info = first_line.strip().split('vom ')[1]

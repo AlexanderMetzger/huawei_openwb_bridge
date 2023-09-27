@@ -7,7 +7,7 @@ COPY requirements.txt ./
 #RUN apk add --no-cache gcc
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY huaweimqtt_v1_0.py ./
+COPY huaweimqtt.py ./
 COPY config.ini ./
 
 CMD [ "python", "./huaweimqtt_v1_0.py" ]
