@@ -7,6 +7,7 @@ import subprocess
 import shutil
 import requests
 import zipfile
+import git
 
 app = Flask(__name__)
 
@@ -24,6 +25,10 @@ wifi_interface = 0
 # Initialisiere die Variable für den Verbindungsstatus
 connection_status = None
 
+# GitHub-Repository-Informationen
+repository_url = 'https://github.com/AlexanderMetzger/huawei_openwb_bridge.git'
+# Eine Liste von Dateien, die aktualisiert werden sollen
+repo_directory = '/home/pi/repo_huaweimqtt'
 
 # Lese den Versionshinweis aus der huaweimqtt.py-Datei
 def get_firmware_version():
@@ -35,6 +40,47 @@ def get_firmware_version():
     except Exception as e:
         print(f"Fehler beim Auslesen der Firmware-Version: {e}")
         return "Unbekannt"
+        
+        
+
+
+@app.route('/update_firmware_new', methods=['POST'])
+def update_firmware_new():
+    if not os.path.exists(repo_directory):
+        git.Repo.clone_from(repository_url, repo_directory)
+    else:
+        # Wenn das Repository bereits existiert, aktualisieren Sie es auf die neueste Version
+        repo = git.Repo(repo_directory)
+        origin = repo.remote('origin')
+        origin.pull()
+        
+        # Datei kopieren und ersetzen
+        shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.py', '/home/pi/huawei_bridge_openwb/huaweimqtt.py')
+        # Hier die index.html-Datei kopieren und ersetzen
+        shutil.copy('/home/pi/repo_huaweimqtt/index.html', '/home/pi/templates/index.html')
+        #shutil.copy('/home/pi/huawei_bridge_openwb/config.ini', '/home/pi/huawei_bridge_openwb/config.ini')
+        shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.py', '/home/pi/wlan_app.py')
+        #shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.service', '/usr/lib/systemd/system/wlan_app.service')
+        #shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/usr/lib/systemd/system/huaweimqtt.service')
+
+        # Berechtigungen zurücksetzen
+        os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
+        os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
+        os.chown('/home/pi/wlan_app.py', os.getuid(), os.getgid())
+        os.chmod('/home/pi/wlan_app.py', 0o755)
+        
+        # Firmware-Version auslesen
+        try:
+            with open('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 'r') as f:
+                first_line = f.readline()
+                if first_line.startswith('# version'):
+                    version_info = first_line.strip().split('vom ')[1]
+                    # Speichere die Version im Dateisystem ab oder gib sie auf dem Webinterface aus
+                    # Hier kannst du den Code einfügen, um die Version auf dem Webinterface anzuzeigen
+        except Exception as e:
+            return f"Fehler beim Aktualisieren der Firmware: {e}"
+    
+    return "Firmware erfolgreich aktualisiert."
 
 
 
