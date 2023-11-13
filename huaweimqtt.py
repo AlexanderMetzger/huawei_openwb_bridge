@@ -30,7 +30,6 @@ def read_pv_number():
     config.read('/home/pi/huawei_bridge_openwb/config.ini')
     return config.getint('pvnumber', 'value')
 
-
 # openWB IP:
 mqttclient = "PVImporter"
 
@@ -47,10 +46,7 @@ topic_mapping = {
     'storage_current_day_discharge_capacity': f"openWB/set/bat/{read_bat_number()}/get/exported",
     'power_meter_active_power': f"openWB/set/counter/{read_counter_number()}/get/power",
     'grid_frequency': f"openWB/set/counter/{read_counter_number()}/get/frequency",
-
 }
-
-
 
 def publish2openWB(mqtttopic, message):
     publish.single(mqtttopic, payload=message, qos=0, retain=False, hostname=mqtthost, client_id=mqttclient)
@@ -78,13 +74,10 @@ async def huaweiReadValues(topic_mapping):
 
             # Initialize an empty NumPy array for grid currents
             array_currents_grid = np.array([])
-
             # Initialize an empty NumPy array for grid voltages
             array_voltages_grid = np.array([])
-            # Initialize an empty NumPy array for grid voltages
+            # Initialize an empty NumPy array for grid powers
             array_powers_grid = np.array([])
-            # Initialize an empty NumPy array for grid voltages
-            array_powerfactors_grid = np.array([])
 
             for i in registers:
                 try:
@@ -128,16 +121,11 @@ async def huaweiReadValues(topic_mapping):
                         elif str(i) == "power_meter_active_power":
                             mqtttopic = f"openWB/set/counter/{read_counter_number()}/get/power"
                             message = result[0]  * -1
- #                       elif str(i) == "power_factor":
- #                           mqtttopic = "openWB/set/counter/16/get/power_factors"
- #                           message = result[0]
 
                         elif str(i) == "grid_frequency":
                             mqtttopic = f"openWB/set/counter/{read_counter_number()}/get/frequency"
                             message = result[0]
-#                       elif str(i) == "grid_voltage":
-#                           mqtttopic = "openWB/counter/16/get/voltages"
-#                           message = result[0]
+
                         # Handle other registers (in this case, the grid currents)
                         # Append numerical grid currents to the array
                         elif i in ['active_grid_A_current', 'active_grid_B_current', 'active_grid_C_current']:
@@ -149,13 +137,11 @@ async def huaweiReadValues(topic_mapping):
                         elif i in ['grid_A_voltage', 'grid_B_voltage', 'grid_C_voltage']:
                             mqtttopic = f"openWB/set/counter/{read_counter_number()}/get/voltages"
                             array_voltages_grid = np.append(array_voltages_grid, result[0])
-                        # Append numerical grid voltages to the array
+                        # Append numerical grid powers to the array
                         elif i in ['active_grid_A_power', 'active_grid_B_power', 'active_grid_C_power']:
                             mqtttopic = f"openWB/set/counter/{read_counter_number()}/get/powers"
                             array_powers_grid = np.append(array_powers_grid, result[0] * -1)
-#                        elif i in ['active_grid_power_factor', 'active_grid_power_factor', 'active_grid_power_factor']:
-#                            mqtttopic = "openWB/set/counter/16/get/power_factors"
-#                            array_powerfactors_grid = np.append(array_powerfactors_grid, result[0])
+
                         if mqtttopic is not False:
                             register_values[i] = message
 
@@ -181,10 +167,7 @@ async def huaweiReadValues(topic_mapping):
                             # Publish the voltage values as an array
                             publish.single(mqtttopic, payload=value, qos=0, retain=False, hostname=mqtthost,
                                            client_id=mqttclient)
-#                        if register == "active_grid_powerfactors":
- #                           # Publish the voltage values as an array
- #                           publish.single(mqtttopic, payload=value, qos=0, retain=False, hostname=mqtthost,
- #                                          client_id=mqttclient)
+
                         else:
                             # Publish other values directly
                             publish.single(mqtttopic, payload=value, qos=0, retain=False, hostname=mqtthost,
@@ -206,13 +189,8 @@ async def huaweiReadValues(topic_mapping):
                 mqtttopic = f"openWB/set/counter/{read_counter_number()}/get/powers"
                 payload_json = json.dumps(array_powers_grid.tolist())  # Convert to JSON string
                 publish.single(mqtttopic, payload=payload_json, qos=0, retain=False, hostname=mqtthost, client_id=mqttclient)
-#            if array_powers_grid.size > 0:
-#                mqtttopic = "openWB/set/counter/16/get/power_factors"
-#                payload_json = json.dumps(array_powerfactors_grid.tolist())  # Convert to JSON string
-#                publish.single(mqtttopic, payload=payload_json, qos=0, retain=False, hostname=mqtthost, client_id=mqttclient)
 
-
-            time.sleep(1)
+            time.sleep(10)
 
         except KeyboardInterrupt:
             await bridge.stop()
