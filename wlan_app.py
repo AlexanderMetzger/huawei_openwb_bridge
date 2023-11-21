@@ -40,8 +40,8 @@ def get_firmware_version():
     except Exception as e:
         print(f"Fehler beim Auslesen der Firmware-Version: {e}")
         return "Unbekannt"
-        
-        
+
+
 
 
 @app.route('/update_firmware_new', methods=['POST'])
@@ -53,22 +53,22 @@ def update_firmware_new():
         repo = git.Repo(repo_directory)
         origin = repo.remote('origin')
         origin.pull()
-        
+
         # Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.py', '/home/pi/huawei_bridge_openwb/huaweimqtt.py')
         # Hier die index.html-Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/index.html', '/home/pi/templates/index.html')
-        #shutil.copy('/home/pi/huawei_bridge_openwb/config.ini', '/home/pi/huawei_bridge_openwb/config.ini')
+        # Hier die config.ini-Datei kopieren und ersetzen
+        # shutil.copy('/home/pi/huawei_bridge_openwb/config.ini', '/home/pi/huawei_bridge_openwb/config.ini')
+        # Hier die config.ini-Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.py', '/home/pi/wlan_app.py')
-        #shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.service', '/usr/lib/systemd/system/wlan_app.service')
-        #shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/usr/lib/systemd/system/huaweimqtt.service')
 
         # Berechtigungen zurücksetzen
         os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
         os.chown('/home/pi/wlan_app.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/wlan_app.py', 0o755)
-        
+
         # Firmware-Version auslesen
         try:
             with open('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 'r') as f:
@@ -79,7 +79,7 @@ def update_firmware_new():
                     # Hier kannst du den Code einfügen, um die Version auf dem Webinterface anzuzeigen
         except Exception as e:
             return f"Fehler beim Aktualisieren der Firmware: {e}"
-    
+
     return "Firmware erfolgreich aktualisiert."
 
 
