@@ -87,6 +87,52 @@
         }
     </style>
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function checkHuaweiServiceStatus() {
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var isHuaweiServiceEnabled = (response.status === 'enabled');
+
+                        // Überprüfe, ob huawei2nd.service aktiv ist
+                        var isHuawei2ndServiceActive = /* Hier den Code einfügen, um den Status von huawei2nd.service zu überprüfen */;
+
+                        // Jetzt kannst du den Status verwenden, um die Checkbox zu aktualisieren
+                        var checkbox = document.getElementById('secondWRCheckbox');
+                        checkbox.checked = isHuawei2ndServiceActive && isHuaweiServiceEnabled;
+                    }
+                };
+
+                xhr.open('GET', '/check_huawei_service_status', true);
+                xhr.send();
+            }
+
+            // Füge einen Event-Listener für Änderungen an der Checkbox hinzu
+            document.getElementById('secondWRCheckbox').addEventListener('change', function () {
+                // Aktualisiere den Status der systemd-Dienste, wenn die Checkbox geändert wird
+                updateServices();
+            });
+
+            function updateServices() {
+                // Füge hier Code hinzu, um den Status der systemd-Dienste zu aktualisieren,
+                // basierend auf dem Status der Checkbox
+                var checkbox = document.getElementById('secondWRCheckbox');
+                var isChecked = checkbox.checked;
+
+                if (isChecked) {
+                    // Hier kannst du den Code einfügen, um huawei.service zu deaktivieren und huawei2nd.service zu aktivieren
+                } else {
+                    // Hier kannst du den Code einfügen, um huawei2nd.service zu deaktivieren und huawei.service zu aktivieren
+                }
+            }
+
+            // Überprüfe den Status der systemd-Dienste und setze den initialen Status der Checkbox
+            checkHuaweiServiceStatus();
+        });
+    </script>
 </head>
 <body>
     <h2>Huawei - OpenWB MQTT Bridge  </h2>
@@ -130,12 +176,21 @@
         <input type="submit" value="Speichern">
     </form>
         </div>
+
+
+        <h3>2. Wechselrichter ohne Speicher und EVU</h3>
+    <form action="/control_services" method="post">
+        <label for="secondWR">Das hier ist ein weiterer Wechselrichter ohne Speicher und EVU</label>
+        <input type="checkbox" name="secondWRCheckbox" id="secondWRCheckbox">
+        <br>
+        <button type="submit">Aktualisieren</button>
+    </form>
   <div class="actions-container">
         <form action="/restart" method="post" class="restart-form">
             <h4>Neustarten des Raspberry Pi</h4>
             <input type="submit" value="Restart">
         </form>
-        <form action="/update_firmware" method="post" class="update-form">
+        <form action="/update_firmware_new" method="post" class="update-form">
             <h4>Update</h4>
             <p>ACHTUNG: Nach dem Update müssen die MQTT-Adressen und die IP der OpenWB wieder eingestellt werden!</p>
             <input type="submit" value="Update">
