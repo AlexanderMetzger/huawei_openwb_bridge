@@ -1,5 +1,5 @@
 import time
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from wifi import Cell
 import configparser
 import os
@@ -81,7 +81,42 @@ def update_firmware_new():
             return f"Fehler beim Aktualisieren der Firmware: {e}"
 
     return "Firmware erfolgreich aktualisiert."
+    
+    
 
+@app.route('/control_services', methods=['POST'])
+def control_services():
+    try:
+        #check the checkbox
+        is_secondWR_checked = 'secondWRCheckbox' in request.form
+
+        if is_secondWR_checked:
+            subprocess.run(['sudo', 'systemctl', 'stop', 'huaweimqtt.service'])
+            subprocess.run(['sudo', 'systemctl', 'disable', 'huaweimqtt.service'])
+
+            subprocess.run(['sudo', 'systemctl', 'start', 'huawei2ndmqtt.service'])
+            subprocess.run(['sudo', 'systemctl', 'enable', 'huawei2ndmqtt.service'])
+        else:
+            subprocess.run(['sudo', 'systemctl', 'stop', 'huawei2ndmqtt.service'])
+            subprocess.run(['sudo', 'systemctl', 'disable', 'huawei2ndmqtt.service'])
+
+            subprocess.run(['sudo', 'systemctl', 'start', 'huaweimqtt.service'])
+            subprocess.run(['sudo', 'systemctl', 'enable', 'huaweimqtt.service'])
+
+        return redirect('/')
+    except Exception as e:
+        return f"Fehler beim Steuern der Dienste: {e}"
+
+@app.route('/check_huawei_service_status', methods=['GET'])
+def check_huawei_service_status():
+    try:
+        # Überprüfe den Status des huawei.service-Dienstes
+        result = subprocess.run(['sudo', 'systemctl', 'is-enabled', 'huaweimqtt.service'], capture_output=True, text=True, check=True)
+        
+        # Gib den Status als JSON zurück
+        return jsonify({'status': result.stdout.strip()})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Interner Serverfehler
 
 
 @app.route('/update_firmware', methods=['POST'])
