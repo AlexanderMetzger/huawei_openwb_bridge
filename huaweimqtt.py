@@ -37,7 +37,7 @@ def try_reconnect(client):
 
 
 async def huaweiReadValues(bridge, topic_mapping, mqtthost, mqttclient, registers):
-
+   
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
@@ -45,9 +45,9 @@ async def huaweiReadValues(bridge, topic_mapping, mqtthost, mqttclient, register
     # Setzen Sie hier weitere Konfigurationsoptionen für den Client
 
     client.connect(mqtthost, 1883, 60)
-
-
-
+   
+   
+   
     if bridge is None:
         bridge = await HuaweiSolarBridge.create(host="192.168.200.1", port=6607)
         print("Verbindungsbruecke herstellen")
@@ -183,9 +183,9 @@ topic_mapping = {
 }
 
 # Registernames
-registers = ['input_power', 'daily_yield_energy', 'grid_accumulated_energy', 'power_meter_active_power', 'grid_frequency',
+registers = ['input_power', 'daily_yield_energy', 'grid_accumulated_energy', 'power_meter_active_power', 'grid_frequency', 
 'grid_exported_energy', 'storage_charge_discharge_power', 'storage_current_day_charge_capacity', 'storage_current_day_discharge_capacity', 'storage_state_of_capacity',
-'active_grid_A_power', 'active_grid_B_power', 'active_grid_C_power', 'grid_A_voltage', 'grid_B_voltage', 'grid_C_voltage', 'active_grid_A_current', 'active_grid_B_current', 'active_grid_C_current',
+'active_grid_A_power', 'active_grid_B_power', 'active_grid_C_power', 'grid_A_voltage', 'grid_B_voltage', 'grid_C_voltage', 'active_grid_A_current', 'active_grid_B_current', 'active_grid_C_current', 
 ]
 
 bridge = None
