@@ -56,6 +56,7 @@ def update_firmware_new():
 
         # Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.py', '/home/pi/huawei_bridge_openwb/huaweimqtt.py')
+        shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt2ndinv.py', '/home/pi/huawei_bridge_openwb/huaweimqtt2ndinv.py')
         # Hier die index.html-Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/index.html', '/home/pi/templates/index.html')
         # Hier die config.ini-Datei kopieren und ersetzen
@@ -66,6 +67,8 @@ def update_firmware_new():
         # Berechtigungen zurücksetzen
         os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
+        os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt2ndinv.py', os.getuid(), os.getgid())
+        os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt2ndinv.py', 0o755)
         os.chown('/home/pi/wlan_app.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/wlan_app.py', 0o755)
 
@@ -81,8 +84,8 @@ def update_firmware_new():
             return f"Fehler beim Aktualisieren der Firmware: {e}"
 
     return "Firmware erfolgreich aktualisiert."
-    
-    
+
+
 
 @app.route('/control_services', methods=['POST'])
 def control_services():
@@ -112,7 +115,7 @@ def check_huawei_service_status():
     try:
         # Überprüfe den Status des huawei.service-Dienstes
         result = subprocess.run(['sudo', 'systemctl', 'is-enabled', 'huaweimqtt.service'], capture_output=True, text=True, check=True)
-        
+
         # Gib den Status als JSON zurück
         return jsonify({'status': result.stdout.strip()})
     except Exception as e:
