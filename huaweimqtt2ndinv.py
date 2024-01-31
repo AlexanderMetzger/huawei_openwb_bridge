@@ -99,8 +99,6 @@ def read_config():
 config = read_config()
 mqtthost = config['MQTT']['host']
 pvnumber = config.getint('pvnumber', 'value')
-counter_number = config.getint('counternumber', 'value')
-bat_number = config.getint('batnumber', 'value')
 
 # Dictionary MQTT-Topic Mapping
 topic_mapping = {
