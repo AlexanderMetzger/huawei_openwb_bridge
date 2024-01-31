@@ -7,6 +7,8 @@ Wants=network.target
 User=pi
 ExecStartPre=/bin/sleep 30
 ExecStart=/usr/local/bin/python3.10 /home/pi/huawei_bridge_openwb/huaweimqtt2ndinv.py
+Restart=always
+RestartSec=600   # Neustart alle 10 Minuten
 
 [Install]
 WantedBy=multi-user.target
