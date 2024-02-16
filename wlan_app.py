@@ -68,6 +68,7 @@ def update_firmware_new():
 
         try:
             subprocess.run(['sudo', 'cp', '/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service'], check=True)
+            subprocess.run(['sudo', 'cp', '/home/pi/repo_huaweimqtt/huaweimqtt2ndinv.service', '/lib/systemd/system/huaweimqtt2ndinv.service'], check=True)
         except subprocess.CalledProcessError as e:
             return f"Fehler beim Kopieren der Dienstdatei: {e}"
 
