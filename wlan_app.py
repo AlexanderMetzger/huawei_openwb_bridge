@@ -63,8 +63,14 @@ def update_firmware_new():
         # shutil.copy('/home/pi/huawei_bridge_openwb/config.ini', '/home/pi/huawei_bridge_openwb/config.ini')
         # Hier die config.ini-Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.py', '/home/pi/wlan_app.py')
-        subprocess.run(['sudo', 'cp', ('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service'])
+        #subprocess.run(['sudo', 'cp', ('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service'])
         # Berechtigungen zurücksetzen
+
+        try:
+            subprocess.run(['sudo', 'cp', '/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service'], check=True)
+        except subprocess.CalledProcessError as e:
+            return f"Fehler beim Kopieren der Dienstdatei: {e}"
+
         os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
         os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt2ndinv.py', os.getuid(), os.getgid())
@@ -72,7 +78,6 @@ def update_firmware_new():
         os.chown('/home/pi/wlan_app.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/wlan_app.py', 0o755)
 
-        # Firmware-Version auslesen
         try:
             with open('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 'r') as f:
                 first_line = f.readline()
