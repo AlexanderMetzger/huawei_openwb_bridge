@@ -63,7 +63,7 @@ def update_firmware_new():
         # shutil.copy('/home/pi/huawei_bridge_openwb/config.ini', '/home/pi/huawei_bridge_openwb/config.ini')
         # Hier die config.ini-Datei kopieren und ersetzen
         shutil.copy('/home/pi/repo_huaweimqtt/wlan_app.py', '/home/pi/wlan_app.py')
-        #shutil.copy('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service')
+        subprocess.run(['sudo', 'cp', ('/home/pi/repo_huaweimqtt/huaweimqtt.service', '/lib/systemd/system/huaweimqtt.service'])
         # Berechtigungen zurücksetzen
         os.chown('/home/pi/huawei_bridge_openwb/huaweimqtt.py', os.getuid(), os.getgid())
         os.chmod('/home/pi/huawei_bridge_openwb/huaweimqtt.py', 0o755)
