@@ -102,11 +102,11 @@ async def huaweiReadValues(bridge, topic_mapping, mqtthost, mqttclient, register
 
                     elif register == "grid_accumulated_energy":
                             mqtttopic = f"openWB/set/counter/{counter_number}/get/imported"
-                            message = result[0]
+                            message = result[0] * 1000
 
                     elif register == "grid_exported_energy":
                             mqtttopic = f"openWB/set/counter/{counter_number}/get/exported"
-                            message = result[0]
+                            message = result[0] * 1000
                         # Handle other registers (in this case, the grid currents)
                         # Append numerical grid currents to the array
                     elif register in ['active_grid_A_current', 'active_grid_B_current', 'active_grid_C_current']:
