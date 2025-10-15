@@ -1,4 +1,4 @@
-# version 1.5 vom 20.11.23
+# version 1.8 vom 15.10.25
 import time
 import asyncio
 import paho.mqtt.publish as publish
