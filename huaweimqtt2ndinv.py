@@ -60,12 +60,12 @@ async def huaweiReadValues(bridge, topic_mapping, mqtthost, mqttclient, register
                     mqtttopic = None
 
                     if register == 'input_power':
-                            mqtttopic = f"openWB/set/pv/{pvnumber}/get/power"
+                            mqtttopic = f"openWB/set/mqtt/pv/{pvnumber}/get/power"
                             message = result[0] * -1
                           #  print(f"Eingangsleistung: {result[0]}")
 
                     elif register == 'daily_yield_energy':
-                            mqtttopic = f"openWB/set/pv/{pvnumber}/get/exported"
+                            mqtttopic = f"openWB/set/mqtt/pv/{pvnumber}/get/exported"
                             message = result[0] * 1000
                           #  print(f"Taegliche Ertragsenergie: {result[0]}")
 
@@ -102,8 +102,8 @@ pvnumber = config.getint('pvnumber', 'value')
 
 # Dictionary MQTT-Topic Mapping
 topic_mapping = {
-    'input_power': f"openWB/set/pv/{pvnumber}/get/power",
-    'daily_yield_energy': f"openWB/set/pv/{pvnumber}/get/exported",
+    'input_power': f"openWB/set/mqtt/pv/{pvnumber}/get/power",
+    'daily_yield_energy': f"openWB/set/mqtt/pv/{pvnumber}/get/exported",
 }
 
 # Registernames
